@@ -3,13 +3,14 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-export async function createTeam(name: string, description: string) {
+export async function createTeam(name: string, description: string, projectId?: string, invitations?: string[]) {
     const supabase = await createServerSupabaseClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) throw new Error('Unauthorized')
 
-    const { data, error } = await supabase
+    // Create the team
+    const { data: team, error } = await supabase
         .from('teams')
         .insert({
             name,
@@ -21,8 +22,32 @@ export async function createTeam(name: string, description: string) {
 
     if (error) throw error
 
+    // Link to project if provided
+    if (projectId) {
+        await supabase
+            .from('projects')
+            .update({ team_id: team.id })
+            .eq('id', projectId)
+            .eq('owner_id', user.id)
+    }
+
+    // Send invitations if provided
+    if (invitations && invitations.length > 0) {
+        const inviteData = invitations.map(email => ({
+            team_id: team.id,
+            email: email.trim(),
+            role: 'member' as const,
+            inviter_id: user.id
+        }))
+
+        await supabase.from('team_invitations').insert(inviteData)
+    }
+
     revalidatePath('/teams')
-    return data
+    revalidatePath('/dashboard')
+    if (projectId) revalidatePath(`/projects/${projectId}`)
+
+    return team
 }
 
 export async function updateTeam(id: string, name: string, description: string) {

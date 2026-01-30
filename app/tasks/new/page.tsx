@@ -12,10 +12,11 @@ export default function NewTaskPage() {
   const projectId = searchParams.get('project_id')
 
   const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
   const [status, setStatus] = useState('pending')
   const [priority, setPriority] = useState('medium')
   const [dueDate, setDueDate] = useState('')
+  const [dueTime, setDueTime] = useState('')
+  const [taskTag, setTaskTag] = useState('')
   const [assignedTo, setAssignedTo] = useState('')
   const [selectedProjectId, setSelectedProjectId] = useState(projectId || '')
   const [projects, setProjects] = useState<any[]>([])
@@ -40,17 +41,43 @@ export default function NewTaskPage() {
       if (projectsData) {
         setProjects(projectsData)
       }
-
-      // Fetch users (for now, just the current user - in a real app, you'd have team members)
-      const { data: usersData } = await supabase.from('users').select('*')
-      if (usersData) {
-        setUsers(usersData)
-        setAssignedTo(user.id)
-      }
     }
 
     fetchData()
   }, [])
+
+  useEffect(() => {
+    const fetchProjectMembers = async () => {
+      if (!selectedProjectId) {
+        // If no project selected, maybe show all users or just current user
+        const { data: usersData } = await supabase.from('users').select('*')
+        if (usersData) setUsers(usersData)
+        return
+      }
+
+      const { data: membersData } = await supabase
+        .from('project_members')
+        .select(`
+          user_id,
+          users:user_id (
+            id,
+            full_name,
+            email
+          )
+        `)
+        .eq('project_id', selectedProjectId)
+
+      if (membersData) {
+        const members = membersData.map((m: any) => m.users).filter(Boolean)
+        setUsers(members)
+        if (members.length > 0 && !members.find(m => m.id === assignedTo)) {
+          setAssignedTo(members[0].id)
+        }
+      }
+    }
+
+    fetchProjectMembers()
+  }, [selectedProjectId])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -69,10 +96,11 @@ export default function NewTaskPage() {
       const { error: insertError } = await supabase.from('tasks').insert([
         {
           title,
-          description,
           status,
           priority,
           due_date: dueDate || null,
+          due_time: dueTime || null,
+          task_tag: taskTag || null,
           assigned_to: assignedTo || user.id,
           project_id: selectedProjectId || null,
           created_by: user.id,
@@ -127,17 +155,18 @@ export default function NewTaskPage() {
             />
           </div>
 
+
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-              Description
+            <label htmlFor="taskTag" className="block text-sm font-medium text-gray-700">
+              Task Tag (Optional)
             </label>
-            <textarea
-              id="description"
-              rows={4}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+            <input
+              type="text"
+              id="taskTag"
+              value={taskTag}
+              onChange={(e) => setTaskTag(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm px-3 py-2 border"
-              placeholder="Enter task description"
+              placeholder="e.g. Design, Bug, Setup"
             />
           </div>
 
@@ -213,17 +242,31 @@ export default function NewTaskPage() {
               </select>
             </div>
 
-            <div>
-              <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700">
-                Due Date
-              </label>
-              <input
-                type="date"
-                id="dueDate"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm px-3 py-2 border"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700">
+                  Due Date
+                </label>
+                <input
+                  type="date"
+                  id="dueDate"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm px-3 py-2 border"
+                />
+              </div>
+              <div>
+                <label htmlFor="dueTime" className="block text-sm font-medium text-gray-700">
+                  Due Time
+                </label>
+                <input
+                  type="time"
+                  id="dueTime"
+                  value={dueTime}
+                  onChange={(e) => setDueTime(e.target.value)}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm px-3 py-2 border"
+                />
+              </div>
             </div>
           </div>
 

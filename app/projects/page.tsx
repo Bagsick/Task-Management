@@ -1,6 +1,6 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Plus, FolderKanban, Calendar } from 'lucide-react'
+import { Plus, FolderKanban, Clock, Layout, ChevronRight } from 'lucide-react'
 import { format } from 'date-fns'
 
 export default async function ProjectsPage() {
@@ -13,107 +13,88 @@ export default async function ProjectsPage() {
     return null
   }
 
+  // Fetch projects from project_members join
   const { data: projects } = await supabase
     .from('projects')
-    .select('*')
-    .eq('owner_id', user.id)
+    .select(`
+      *,
+      project_members!inner(role)
+    `)
+    .eq('project_members.user_id', user.id)
     .order('created_at', { ascending: false })
 
-  // Get task counts for each project
-  const projectsWithCounts = await Promise.all(
-    (projects || []).map(async (project) => {
-      const { count } = await supabase
-        .from('tasks')
-        .select('*', { count: 'exact', head: true })
-        .eq('project_id', project.id)
-
-      return {
-        ...project,
-        taskCount: count || 0,
-      }
-    })
-  )
-
   return (
-    <div className="px-4 py-6 sm:px-0">
-      <div className="sm:flex sm:items-center sm:justify-between mb-8">
+    <div className="space-y-8 animate-in fade-in duration-500">
+      {/* Header Section */}
+      <section className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Manage your projects and track progress
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-50">Projects</h1>
+          <p className="mt-2 text-gray-500 dark:text-slate-500">Manage and track all your collaborative workspaces.</p>
         </div>
-        <div className="mt-4 sm:mt-0">
-          <Link
-            href="/projects/new"
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            New Project
-          </Link>
-        </div>
-      </div>
+        <Link
+          href="/projects/new"
+          className="px-6 py-2.5 bg-[#6366f1] text-white rounded-xl font-medium hover:bg-[#5558e3] transition-all flex items-center gap-2 shadow-lg shadow-[#6366f1]/20 self-start md:self-center"
+        >
+          <Plus size={18} /> Create Project
+        </Link>
+      </section>
 
-      {projectsWithCounts && projectsWithCounts.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {projectsWithCounts.map((project) => (
+      {/* Projects Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {projects && projects.length > 0 ? (
+          projects.map((project: any) => (
             <Link
               key={project.id}
               href={`/projects/${project.id}`}
-              className="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow"
+              className="group bg-white dark:bg-slate-900/40 rounded-3xl border border-gray-100 dark:border-slate-800/50 shadow-sm hover:shadow-2xl hover:border-[#6366f1]/30 dark:hover:border-[#6366f1]/40 transition-all p-6 relative overflow-hidden flex flex-col h-full backdrop-blur-xl"
             >
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <FolderKanban className="h-8 w-8 text-primary-600" />
+              {/* Background Accent */}
+              <div className="absolute -top-12 -right-12 w-32 h-32 bg-[#6366f1]/5 rounded-full group-hover:scale-150 transition-transform duration-700" />
+
+              <div className="relative z-10 flex grow flex-col">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="w-12 h-12 rounded-2xl bg-gray-50 dark:bg-slate-800/50 flex items-center justify-center text-[#6366f1] group-hover:bg-[#6366f1] group-hover:text-white transition-colors duration-300">
+                    <FolderKanban size={24} />
                   </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">
-                        {project.status}
-                      </dt>
-                      <dd className="text-lg font-medium text-gray-900">
-                        {project.name}
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <p className="text-sm text-gray-600 line-clamp-2">
-                    {project.description || 'No description'}
-                  </p>
-                </div>
-                <div className="mt-4 flex items-center justify-between">
-                  <div className="flex items-center text-sm text-gray-500">
-                    <Calendar className="h-4 w-4 mr-1" />
-                    {format(new Date(project.created_at), 'MMM dd, yyyy')}
-                  </div>
-                  <span className="text-sm font-medium text-gray-900">
-                    {project.taskCount} {project.taskCount === 1 ? 'task' : 'tasks'}
+                  <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${project.project_members?.[0]?.role === 'admin' ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400' : 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400'
+                    }`}>
+                    {project.project_members?.[0]?.role || 'Member'}
                   </span>
+                </div>
+
+                <h3 className="text-lg font-bold text-gray-900 dark:text-slate-100 mb-2 truncate group-hover:text-[#6366f1] transition-colors">{project.name}</h3>
+                <p className="text-sm text-gray-500 dark:text-slate-500 line-clamp-2 mb-8 grow">{project.description || 'No description provided.'}</p>
+
+                <div className="pt-6 border-t border-gray-50 dark:border-slate-800/50 flex items-center justify-between mt-auto">
+                  <div className="flex items-center gap-4 text-xs text-gray-400 font-medium">
+                    <span className="flex items-center gap-1.5">
+                      <Clock size={14} /> {project.created_at ? format(new Date(project.created_at), 'MMM dd') : 'N/A'}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Layout size={14} /> Active
+                    </span>
+                  </div>
+                  <ChevronRight size={18} className="text-gray-300 group-hover:text-[#6366f1] group-hover:translate-x-1 transition-all" />
                 </div>
               </div>
             </Link>
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-12">
-          <FolderKanban className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No projects</h3>
-          <p className="mt-1 text-sm text-gray-500">
-            Get started by creating a new project.
-          </p>
-          <div className="mt-6">
+          ))
+        ) : (
+          <div className="col-span-full py-24 flex flex-col items-center justify-center bg-white dark:bg-slate-900/20 rounded-[40px] border border-gray-100 dark:border-slate-800/50 shadow-sm border-dashed">
+            <div className="w-20 h-20 bg-gray-50 dark:bg-slate-800/50 rounded-full flex items-center justify-center text-gray-300 dark:text-slate-700 mb-6">
+              <FolderKanban size={40} />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-slate-50">No projects yet</h3>
+            <p className="text-gray-500 dark:text-slate-500 mt-2 max-w-xs text-center">Get started by creating your first project and inviting your team.</p>
             <Link
               href="/projects/new"
-              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              className="mt-8 px-6 py-2.5 bg-gray-900 text-white rounded-xl font-medium hover:bg-black transition-all"
             >
-              <Plus className="h-5 w-5 mr-2" />
-              New Project
+              Create First Project
             </Link>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }

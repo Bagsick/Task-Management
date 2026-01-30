@@ -5,9 +5,12 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Task-O - Task Management Application',
+  title: 'Superpage - Modern Task Management',
   description: 'Professional task and project management application',
 }
+
+import { ThemeProvider } from '@/components/ThemeProvider'
+import { SidebarProvider } from '@/components/SidebarContext'
 
 export default function RootLayout({
   children,
@@ -15,8 +18,14 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <SidebarProvider>
+            {children}
+          </SidebarProvider>
+        </ThemeProvider>
+      </body>
     </html>
   )
 }

@@ -55,7 +55,7 @@ export default function InviteMemberModal({ teamId }: { teamId: string }) {
                         </div>
                         <h3 className="text-lg font-medium text-gray-900">Invitation Sent!</h3>
                         <p className="mt-2 text-sm text-gray-500">
-                            We've sent an invitation to join your team.
+                            We&apos;ve sent an invitation to join your team.
                         </p>
                     </div>
                 ) : (
@@ -85,8 +85,8 @@ export default function InviteMemberModal({ teamId }: { teamId: string }) {
                                     type="button"
                                     onClick={() => setRole('member')}
                                     className={`px-4 py-2 text-sm font-medium rounded-xl border transition-all ${role === 'member'
-                                            ? 'bg-primary-50 border-primary-200 text-primary-700 ring-2 ring-primary-500/20'
-                                            : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                                        ? 'bg-primary-50 border-primary-200 text-primary-700 ring-2 ring-primary-500/20'
+                                        : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
                                         }`}
                                 >
                                     Member
@@ -95,8 +95,8 @@ export default function InviteMemberModal({ teamId }: { teamId: string }) {
                                     type="button"
                                     onClick={() => setRole('admin')}
                                     className={`px-4 py-2 text-sm font-medium rounded-xl border transition-all ${role === 'admin'
-                                            ? 'bg-primary-50 border-primary-200 text-primary-700 ring-2 ring-primary-500/20'
-                                            : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                                        ? 'bg-primary-50 border-primary-200 text-primary-700 ring-2 ring-primary-500/20'
+                                        : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
                                         }`}
                                 >
                                     Admin
