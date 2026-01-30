@@ -49,13 +49,13 @@ export default function TaskList({ tasks, projectId }: TaskListProps) {
   const getPriorityColor = (priority?: string) => {
     switch (priority) {
       case 'high':
-        return 'bg-red-100 text-red-800'
+        return 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border border-red-100 dark:border-red-500/20'
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800'
+        return 'bg-yellow-50 dark:bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border border-yellow-100 dark:border-yellow-500/20'
       case 'low':
-        return 'bg-blue-100 text-blue-800'
+        return 'bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20'
       default:
-        return 'bg-gray-100 text-gray-800'
+        return 'bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-400 border border-gray-200 dark:border-slate-700'
     }
   }
 
@@ -65,27 +65,30 @@ export default function TaskList({ tasks, projectId }: TaskListProps) {
         <Link
           key={task.id}
           href={`/tasks/${task.id}`}
-          className="block bg-gray-50 hover:bg-gray-100 rounded-lg p-4 transition-colors border border-gray-200"
+          className="block bg-gray-50 dark:bg-slate-900/50 hover:bg-gray-100 dark:hover:bg-slate-800/50 rounded-2xl p-5 transition-all border border-gray-100 dark:border-slate-800/50 shadow-sm"
         >
           <div className="flex items-start justify-between">
-            <div className="flex items-start space-x-3 flex-1">
-              <div className="mt-0.5">{getStatusIcon(task.status)}</div>
+            <div className="flex items-start space-x-4 flex-1">
+              <div className="mt-1">{getStatusIcon(task.status)}</div>
               <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-medium text-gray-900">{task.title}</h4>
+                <h4 className="text-[15px] font-bold text-gray-900 dark:text-slate-100 group-hover:text-[#6366f1] transition-colors">{task.title}</h4>
                 {task.description && (
-                  <p className="mt-1 text-sm text-gray-500 line-clamp-2">
+                  <p className="mt-2 text-sm text-gray-500 dark:text-slate-500 line-clamp-2 leading-relaxed">
                     {task.description}
                   </p>
                 )}
-                <div className="mt-2 flex items-center space-x-4 text-xs text-gray-500">
+                <div className="mt-4 flex flex-wrap items-center gap-4 text-[11px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">
                   {task.due_date && (
-                    <div className="flex items-center">
-                      <Calendar className="h-3 w-3 mr-1" />
+                    <div className="flex items-center gap-1.5">
+                      <Calendar className="h-4 w-4" />
                       {format(new Date(task.due_date), 'MMM dd, yyyy')}
                     </div>
                   )}
                   {task.assignee && (
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-5 h-5 rounded-full bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center text-[10px] text-[#6366f1]">
+                        {task.assignee.full_name?.[0] || 'U'}
+                      </div>
                       <span>
                         {task.assignee.full_name || task.assignee.email || 'Unassigned'}
                       </span>
@@ -93,7 +96,7 @@ export default function TaskList({ tasks, projectId }: TaskListProps) {
                   )}
                   {task.priority && (
                     <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getPriorityColor(
+                      className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black ${getPriorityColor(
                         task.priority
                       )}`}
                     >

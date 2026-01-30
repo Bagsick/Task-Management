@@ -83,7 +83,7 @@ export default async function TeamSettingsPage({ params, searchParams }: { param
                         <Settings className="h-8 w-8 mr-3 text-primary-600" />
                         Team Settings
                     </h1>
-                    <p className="mt-1 text-sm text-gray-500">Manage your team's details and preferences.</p>
+                    <p className="mt-1 text-sm text-gray-500">Manage your team&apos;s details and preferences.</p>
                 </div>
             </div>
 

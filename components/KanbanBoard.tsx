@@ -28,9 +28,9 @@ interface KanbanBoardProps {
 }
 
 const columns = [
-  { id: 'pending', title: 'Pending', color: 'bg-gray-100' },
-  { id: 'in_progress', title: 'In Progress', color: 'bg-yellow-100' },
-  { id: 'completed', title: 'Completed', color: 'bg-green-100' },
+  { id: 'pending', title: 'Pending', color: 'bg-gray-100 dark:bg-slate-900/50', textColor: 'text-gray-900 dark:text-slate-50' },
+  { id: 'in_progress', title: 'In Progress', color: 'bg-yellow-50 dark:bg-yellow-500/10', textColor: 'text-yellow-700 dark:text-yellow-400' },
+  { id: 'completed', title: 'Completed', color: 'bg-green-50 dark:bg-green-500/10', textColor: 'text-green-700 dark:text-green-400' },
 ]
 
 export default function KanbanBoard({ projectId, userId }: KanbanBoardProps) {
@@ -160,21 +160,24 @@ export default function KanbanBoard({ projectId, userId }: KanbanBoardProps) {
         {columns.map((column) => {
           const columnTasks = getTasksByStatus(column.id)
           return (
-            <div key={column.id} className="flex flex-col">
-              <div className={`${column.color} rounded-t-lg px-4 py-3 border-b border-gray-200`}>
-                <h3 className="text-sm font-semibold text-gray-900">
-                  {column.title} ({columnTasks.length})
+            <div key={column.id} className="flex flex-col bg-gray-50/50 dark:bg-slate-900/30 rounded-3xl border border-gray-100 dark:border-slate-800/50 overflow-hidden backdrop-blur-xl">
+              <div className={`${column.color} px-5 py-4 border-b border-gray-100 dark:border-slate-800/50 flex items-center justify-between`}>
+                <h3 className={`text-xs font-black uppercase tracking-widest ${column.textColor}`}>
+                  {column.title}
                 </h3>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-lg bg-white/50 dark:bg-black/20 ${column.textColor}`}>
+                  {columnTasks.length}
+                </span>
               </div>
               <Droppable droppableId={column.id}>
                 {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className={`flex-1 min-h-[400px] p-4 rounded-b-lg border border-t-0 border-gray-200 bg-gray-50 ${snapshot.isDraggingOver ? 'bg-gray-100' : ''
+                    className={`flex-1 min-h-[500px] p-4 transition-colors ${snapshot.isDraggingOver ? 'bg-indigo-50/30 dark:bg-indigo-500/5' : ''
                       }`}
                   >
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {columnTasks.map((task, index) => (
                         <Draggable key={task.id} draggableId={task.id} index={index}>
                           {(provided, snapshot) => (
@@ -182,30 +185,32 @@ export default function KanbanBoard({ projectId, userId }: KanbanBoardProps) {
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
-                              className={`bg-white rounded-lg shadow-sm p-4 border-l-4 ${getPriorityColor(
+                              className={`bg-white dark:bg-slate-800 rounded-2xl shadow-sm hover:shadow-md p-5 border-l-4 ${getPriorityColor(
                                 task.priority
-                              )} ${snapshot.isDragging ? 'shadow-lg' : ''}`}
+                              )} ${snapshot.isDragging ? 'shadow-xl rotate-2 scale-105' : ''} border border-gray-100 dark:border-slate-700/50 transition-all`}
                             >
                               <Link href={`/tasks/${task.id}`}>
-                                <h4 className="text-sm font-medium text-gray-900 mb-2">
+                                <h4 className="text-[14px] font-bold text-gray-900 dark:text-slate-100 mb-2 leading-tight group-hover:text-[#6366f1] transition-colors">
                                   {task.title}
                                 </h4>
                                 {task.description && (
-                                  <p className="text-xs text-gray-500 line-clamp-2 mb-3">
+                                  <p className="text-[12px] text-gray-400 dark:text-slate-500 line-clamp-2 mb-4 italic leading-relaxed">
                                     {task.description}
                                   </p>
                                 )}
-                                <div className="flex items-center justify-between text-xs text-gray-500">
+                                <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-slate-500">
                                   {task.due_date && (
-                                    <div className="flex items-center">
-                                      <Calendar className="h-3 w-3 mr-1" />
+                                    <div className="flex items-center gap-1">
+                                      <Calendar className="h-3.5 w-3.5" />
                                       {format(new Date(task.due_date), 'MMM dd')}
                                     </div>
                                   )}
                                   {task.assignee && (
-                                    <div className="flex items-center">
-                                      <User className="h-3 w-3 mr-1" />
-                                      {task.assignee.full_name || task.assignee.email}
+                                    <div className="flex items-center gap-1 max-w-[100px]">
+                                      <div className="w-5 h-5 rounded-full bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-[8px] text-[#6366f1] border border-indigo-100 dark:border-indigo-500/20">
+                                        {task.assignee.full_name?.[0] || 'U'}
+                                      </div>
+                                      <span className="truncate">{task.assignee.full_name || task.assignee.email}</span>
                                     </div>
                                   )}
                                 </div>

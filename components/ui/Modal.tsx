@@ -22,18 +22,18 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
     if (!isOpen) return null
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-in zoom-in-95 duration-200">
-                <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                    <h2 className="text-xl font-bold text-gray-900">{title}</h2>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-md animate-in fade-in duration-300">
+            <div className="bg-white dark:bg-slate-950 rounded-[32px] shadow-2xl border border-gray-100 dark:border-slate-800/50 max-w-md w-full overflow-hidden animate-in zoom-in-95 duration-300">
+                <div className="px-8 py-6 border-b border-gray-50 dark:border-slate-800/50 flex justify-between items-center bg-gray-50/50 dark:bg-slate-900/20">
+                    <h2 className="text-[13px] font-black text-gray-900 dark:text-slate-50 uppercase tracking-[0.15em]">{title}</h2>
                     <button
                         onClick={onClose}
-                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-full transition-colors"
+                        className="p-2 text-gray-400 dark:text-slate-600 hover:text-gray-900 dark:hover:text-slate-100 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-xl transition-all"
                     >
-                        <X className="h-5 w-5" />
+                        <X size={18} />
                     </button>
                 </div>
-                <div className="p-6">
+                <div className="p-8">
                     {children}
                 </div>
             </div>

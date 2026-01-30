@@ -51,10 +51,15 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 px-4">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-primary-600 mb-2">Task-O</h1>
-          <h2 className="text-2xl font-semibold text-gray-900">Create Account</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Start managing your projects today
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-20 rounded-3xl bg-white shadow-xl shadow-indigo-100/50 p-3 border border-gray-50 flex items-center justify-center animate-in zoom-in duration-500">
+              <img src="/logo.png" alt="Task-O Logo" className="w-full h-full object-contain" />
+            </div>
+          </div>
+          <h1 className="text-4xl font-black text-gray-900 mb-2 tracking-tight">Task-O</h1>
+          <h2 className="text-xl font-bold text-gray-400 italic">Create Account</h2>
+          <p className="mt-4 text-sm font-medium text-gray-500 leading-relaxed px-4">
+            Join Task-O and experience the future of project management.
           </p>
         </div>
 

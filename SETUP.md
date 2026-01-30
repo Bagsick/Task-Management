@@ -9,7 +9,8 @@ This guide will walk you through setting up the Task-O application step by step.
 - [Step 2: Database Setup (Supabase)](#step-2-database-setup-supabase)
 - [Step 3: Configure Supabase](#step-3-configure-supabase)
 - [Step 4: Enable Realtime](#step-4-enable-realtime)
-- [Step 5: Run the Development Server](#step-5-run-the-development-server)
+- [Step 5: Storage Setup (Buckets)](#step-5-storage-setup-buckets)
+- [Step 6: Run the Development Server](#step-6-run-the-development-server)
 - [Step 6: Create Your First Account](#step-6-create-your-first-account)
 - [Step 10: Deploy to Vercel](#step-10-deploy-to-vercel)
 
@@ -144,6 +145,50 @@ For real-time updates in the Kanban board and notifications:
    - `notifications`
 
 3. **Click the toggle** next to each table to enable replication
+
+## Step 5: Storage Setup (Buckets)
+
+For profile picture uploads to work:
+
+1. **Go to Storage** in Supabase dashboard
+2. **Create a New Bucket** named `avatars`
+3. **Set the Bucket to Public** (this allows images to be viewed without a token)
+4. **Configure RLS Policies** for the `avatars` bucket:
+   - Click **Storage** > **Configuration** > **Policies**
+   - Click **New Policy** for the `objects` table:
+     - **Select**: Allow public access to all objects (check "READ")
+     - **Insert**: Allow authenticated users to upload their own file (check "INSERT" and "authenticated" role)
+     - **Update/Delete**: Allow users to manage their own objects
+
+   **Alternatively, run this SQL in the SQL Editor**:
+
+   ```sql
+   -- Create the bucket
+   insert into storage.buckets (id, name, public)
+   values ('avatars', 'avatars', true);
+
+   -- Allow public access to avatars
+   create policy "Public Access"
+   on storage.objects for select
+   using ( bucket_id = 'avatars' );
+
+   -- Allow authenticated users to upload their own avatar
+   create policy "Authenticated users can upload an avatar"
+   on storage.objects for insert
+   with check (
+     bucket_id = 'avatars' 
+     AND auth.role() = 'authenticated'
+   );
+
+   -- Allow users to update/delete their own avatar
+   create policy "Users can update their own avatar"
+   on storage.objects for update
+   using ( auth.uid() = (storage.foldername(name))[1]::uuid AND bucket_id = 'avatars' );
+
+   create policy "Users can delete their own avatar"
+   on storage.objects for delete
+   using ( auth.uid() = (storage.foldername(name))[1]::uuid AND bucket_id = 'avatars' );
+   ```
 
 ## Step 5: Run the Development Server
 
