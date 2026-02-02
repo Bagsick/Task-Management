@@ -44,8 +44,8 @@ export default function LandingPage() {
       <nav className="sticky top-0 z-50 backdrop-blur-xl bg-white/60 border-b border-white/30 shadow-lg">
         <div className="flex items-center justify-between px-6 md:px-16 py-4">
           {/* Logo */}
-          <div className="text-2xl font-extrabold bg-gradient-to-r from-gray-700 via-gray-900 to-black bg-clip-text text-transparent hover:scale-110 transition-transform duration-300 cursor-pointer">
-            Task-O
+          <div className="flex items-center transition-all duration-300 hover:scale-110 hover:brightness-125 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
+            <img src="/transparent-nav-logo.png" alt="Task-O Logo" className="h-10 md:h-12" />
           </div>
 
           {/* Nav Links */}
