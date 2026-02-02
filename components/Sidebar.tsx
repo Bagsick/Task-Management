@@ -141,8 +141,15 @@ export default function Sidebar({ currentUser }: SidebarProps) {
                 {/* Brand / Toggle */}
                 <div className="p-6 pb-2 flex items-center justify-between">
                     {(!isCollapsed || isMobileOpen) && (
-                        <Link href="/dashboard" className="flex items-center transition-transform hover:scale-110">
-                            <img src="/logo.png" alt="Logo" className="w-10 h-10 lg:w-14 lg:h-14 rounded-xl object-contain" />
+                       <Link
+                            href="/dashboard"
+                            className="flex items-center transition-all duration-300 hover:scale-110 hover:brightness-125 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"
+                        >
+                            <img
+                                src="/transparent-nav-logo.png" // Make sure this PNG already has "Task-0" text
+                                alt="Logo"
+                                className="w-auto h-10 lg:h-14 scale-x-130" // Stretch horizontally 150%
+                            />
                         </Link>
                     )}
                     <div className="flex items-center gap-1">

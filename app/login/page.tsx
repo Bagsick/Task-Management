@@ -69,15 +69,15 @@ export default function LoginPage() {
         <div className="flex items-center justify-between px-6 md:px-16 py-4">
           <Link
             href="/"
-            className="text-2xl font-extrabold bg-gradient-to-r from-gray-700 via-gray-900 to-black bg-clip-text text-transparent hover:scale-110 transition-transform duration-300 cursor-pointer"
-          >
-            Task-O
+            className="flex items-center transition-all duration-300 hover:scale-110 hover:brightness-125 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
+            <img src="/transparent-nav-logo.png" alt="Task-O Logo" className="h-10 md:h-12" />
           </Link>
 
-          <div className="hidden md:flex space-x-10 text-gray-700 font-medium">
+          
+          {/*<div className="hidden md:flex space-x-10 text-gray-700 font-medium">
             {['About', 'Features', 'Contact'].map((item) => (
               <Link
-                key={item}
+                key={item}  
                 href={`/#${item.toLowerCase()}`}
                 className="relative group"
               >
@@ -87,7 +87,7 @@ export default function LoginPage() {
                 <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-gradient-to-r from-gray-600 via-gray-800 to-black transition-all duration-300 group-hover:w-full shadow-lg group-hover:shadow-gray-500/50"></span>
               </Link>
             ))}
-          </div>
+          </div>*/}
         </div>
       </nav>
 
