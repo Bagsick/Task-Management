@@ -169,15 +169,6 @@ export default function LandingPage() {
             )
           })}
         </div>
-
-        <div className="text-center mt-16" data-animate id="cta">
-          <div className={`transition-all duration-1000 ${isVisible['cta'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <Link href="/signup" className="inline-flex items-center space-x-2 px-10 py-5 text-lg font-semibold text-white bg-gradient-to-r from-gray-800 via-gray-900 to-black rounded-full hover:shadow-2xl hover:shadow-gray-500/50 transition-all duration-300 hover:scale-105 group">
-              <Sparkles className="h-6 w-6 group-hover:rotate-12 transition-transform" />
-              <span>Get Started Free</span>
-            </Link>
-          </div>
-        </div>
       </section>
 
       {/* FOOTER / CONTACT */}
