@@ -4,8 +4,9 @@ import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
+// Default metadata for the app
 export const metadata: Metadata = {
-  title: 'Superpage - Modern Task Management',
+  title: 'Task-O | Task Management Website',
   description: 'Professional task and project management application',
 }
 
@@ -29,4 +30,3 @@ export default function RootLayout({
     </html>
   )
 }
-
