@@ -166,7 +166,7 @@ export default function LandingPage() {
                   <div className="absolute bottom-2 left-2 w-16 h-16 border-b-2 border-l-2 border-gray-300/30 rounded-bl-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 </div>
               </div>
-            )
+            ) 
           })}
         </div>
       </section>
